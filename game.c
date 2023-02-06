@@ -21,14 +21,14 @@ the specified GPIO pin.
 // a GpioConfig structure and the size of the GpioConfig array
 void init_gpio(GpioConfig *gpio, size_t len) {
   // Loop through the length of the GpioConfig array
-  for (size_t i = 0; i < len; i++) {
+
     // Initialize the GPIO specified by the pin number in the current GpioConfig
     // structure
-    gpio_init(gpio[i].pin_number);
+
     // Set the direction of the GPIO specified by the pin number and direction
     // in the current GpioConfig structure
-    gpio_set_dir(gpio[i].pin_number, gpio[i].pin_dir);
-  }
+
+
 }
 
 // ----------------------------------------
@@ -44,6 +44,7 @@ is false, it returns false, indicating an invalid button press.
 */
 // Define a function named "debounce" that takes in a constant volatile BtnState
 // structure as an argument
+// This function is complete. No need to change!
 bool debounce(const volatile BtnState btn) {
   // Check if the previous state and current state of the button have changed
   if (has_changed(btn.prev_state, btn.curr_state)) {
@@ -74,21 +75,18 @@ stable. If the two states do not match, it returns false.
 // previous state of the button)
 bool is_stable(const uint button, const bool prev_state) {
   // Wait for a specific amount of time (DEBOUNCE_DELAY)
-  sleep_us(DEBOUNCE_DELAY);
+
   // Get the current state of the button
-  uint current_state = gpio_get(button);
+
   // Check if the previous state and current state of the button are both high
-  if (prev_state == HIGH && current_state == HIGH) {
+
     // Optionally print a message if the button state is stable (only if the
     // preprocessor macro "VERBOSE" is defined)
-#ifdef VERBOSE
-    printf("Button state is stable\n");
-#endif
+
     // Return true if the button state is stable
-    return true;
-  }
+
   // Return false if the button state is not stable
-  return false;
+
 }
 
 /*
@@ -106,16 +104,12 @@ false.
 // previous state and current state of the button
 bool has_changed(bool prev_state, bool curr_state) {
   // Check if the previous state is LOW and the current state is HIGH
-  bool changed = (prev_state == LOW && curr_state == HIGH);
+
   // Optionally print a message if the button state has changed (only if the
   // preprocessor macro "VERBOSE" is defined)
-#ifdef VERBOSE
-  if (changed) {
-    printf("Button state changed\n");
-  }
-#endif
+
   // Return true if the button state has changed, false otherwise
-  return changed;
+
 }
 
 /*
@@ -133,17 +127,14 @@ argument.
 // volatile BtnState structure
 void update_btn_state(volatile BtnState *btn) {
   // Check if the current state of the button is 0
-  if (btn->curr_state == 0) {
+
     // If so, set the previous state of the button to 0
-    btn->prev_state = 0;
-  }
+
   // Check if the current state of the button is 1
-  else if (btn->curr_state == 1) {
+
     // If so, set the previous state of the button to 1
-    btn->prev_state = 1;
-  }
+
   // Update the current state of the button by reading the button pin
-  btn->curr_state = gpio_get(btn->but_pin);
 }
 
 // ----------------------------------------
@@ -166,28 +157,25 @@ and print_player_turn (to print the current player's turn).
 void reset_board(char *current_player, uint *moves, char (*board)[COLS],
                  bool *is_game_over) {
   // Print a message indicating that the board is being reset
-  printf("Reset board\n");
+
   // Loop over the rows and columns of the game board
-  for (int i = 0; i < ROWS; i++) {
-    for (int j = 0; j < COLS; j++) {
+
       // Set each cell of the game board to the "EMPTY" value
-      board[i][j] = EMPTY;
-    }
-  }
+
   // Reset the number of moves to 0
-  *moves = 0;
+
   // Reset the current player to "X"
-  *current_player = X;
+
   // Reset the game over flag to false
-  *is_game_over = false;
+
   // Call the function "print_board" with the game board as an argument
-  print_board(board);
+
   // Call the function "print_player_turn" with the current player as an
   // argument
-  print_player_turn(*current_player);
+
   // Call the function "multicore_fifo_push_blocking" with "EMPTY" as an
   // argument
-  multicore_fifo_push_blocking(EMPTY);
+
 }
 
 /*
@@ -203,7 +191,7 @@ returns 1. This calculation assumes that the game board has 3 ROWS and COLS.
 uint get_curr_row(const uint moves) {
   // Return the current row in the game board by dividing the number of moves by
   // the number of rows
-  return (uint)(moves) / ROWS;
+
 }
 
 /*
@@ -219,7 +207,7 @@ board has 3 ROWS and COLS.
 uint get_next_row(const uint moves) {
   // Return the next row in the game board by dividing the number of moves plus
   // one by the number of rows
-  return (uint)(moves + 1) / ROWS;
+
 }
 
 /*
@@ -236,7 +224,7 @@ the game board has 3 ROWS and COLS.
 uint get_next_col(const uint moves) {
   // Return the next column in the game board by taking the remainder of the
   // number of moves plus one divided by the number of columns
-  return (uint)(moves + 1) % COLS;
+
 }
 
 /*
@@ -253,7 +241,7 @@ ROWS and COLS.
 uint get_curr_col(const uint moves) {
   // Return the current column in the game board by taking the remainder of the
   // number of moves divided by the number of columns
-  return (uint)(moves) % COLS;
+
 }
 
 /*
@@ -271,21 +259,17 @@ from the top-left corner of the board.
 // Increment the move counter to update the current position of game
 void update_position(uint *moves) {
   // Calculate the next row and column of the board
-  uint next_row = get_next_row(*moves);
-  uint next_col = get_next_col(*moves);
+
   // Check if the next position is within the valid range of the board
-  if (is_valid_pos(next_row, next_col)) {
+
     // Increment the move counter
-    (*moves)++;
-  } else {
+
     // If the end of the board is reached, start again from the top
-#ifdef VERBOSE
+
     // Print message to indicate start of new round
-    printf("End of board. Starting from top.\n");
-#endif
+
     // Reset the move counter
-    *moves = 0;
-  }
+
 }
 
 /*
@@ -298,7 +282,7 @@ of row and col to the console. The message "Row: %u Col: %u\n" is printed, where
 void print_curr_pos(const uint row, const uint col) {
   // Print a string "Row: %u Col: %u\n" with the values of "row" and "col"
   // replacing the placeholders %u
-  printf("Row: %u Col: %u\n", row, col);
+
 }
 
 /*
@@ -315,7 +299,7 @@ and row < ROWS (where ROWS is a constant value), and col >= 0 and col < COLS
 bool is_valid_pos(const uint row, const uint col) {
   // Return true if both row and column are greater than or equal to 0 and less
   // than ROWS and COLS respectively
-  return (row >= 0 && row < ROWS && col >= 0 && col < COLS);
+
 }
 
 /*
@@ -326,7 +310,7 @@ otherwise.
 */
 bool is_empty_pos(uint const row, uint const col, const char (*board)[COLS]) {
   // return true if the cell is empty otherwise return false
-  return (board[row][col] == EMPTY);
+
 }
 
 /*
@@ -343,17 +327,16 @@ void update_board(const char current_player, const uint moves,
                   char (*board)[COLS]) {
   // Calculate the row by calling "get_curr_row" function with the number of
   // moves
-  uint row = get_curr_row(moves);
+
   // Calculate the col by calling "get_curr_col" function with the number of
   // moves
-  uint col = get_curr_col(moves);
+
   // Print the current player and the row and col where the player's input is
   // being entered
-  printf("Entering player %c input into row %d col %d\n", current_player, row,
-         col);
+
   // Update the board at the calculated row and col with the current player's
   // input
-  board[row][col] = current_player;
+
 }
 
 /*
@@ -366,15 +349,15 @@ of the board is displayed inside each cell.
 // "board"
 void print_board(const char (*board)[COLS]) {
   // Print the first row of the board
-  printf(" %c | %c | %c\n", board[0][0], board[0][1], board[0][2]);
+
   // Print the separator line
-  printf("---+---+---\n");
+
   // Print the second row of the board
-  printf(" %c | %c | %c\n", board[1][0], board[1][1], board[1][2]);
+
   // Print the separator line
-  printf("---+---+---\n");
+
   // Print the third row of the board
-  printf(" %c | %c | %c\n", board[2][0], board[2][1], board[2][2]);
+
 }
 
 /*
@@ -384,7 +367,7 @@ game. The message includes the value of current_player and the text "turn".
 */
 void print_player_turn(const char current_player) {
   // Print the "Player %c turn\n", current_player message
-  printf("Player %c turn\n", current_player);
+
 }
 
 // ----------------------------------------
@@ -402,23 +385,17 @@ player is neither X nor O, then both LED1 and LED2 are set to HIGH.
 // as a char
 void update_player_led(const char current_player) {
   // Check if the current player is "X"
-  if (current_player == X) {
+
     // Turn on LED1 and turn off LED2 if the current player is "X"
-    gpio_put(LED1, HIGH);
-    gpio_put(LED2, LOW);
-  }
+
   // Check if the current player is "O"
-  else if (current_player == O) {
+
     // Turn off LED1 and turn on LED2 if the current player is "O"
-    gpio_put(LED1, LOW);
-    gpio_put(LED2, HIGH);
-  }
+
   // If the current player is neither "X" nor "O"
-  else {
+
     // Turn off both LED1 and LED2
-    gpio_put(LED1, LOW);
-    gpio_put(LED2, LOW);
-  }
+
 }
 
 /*
@@ -433,42 +410,39 @@ set to a low state for the same amount of time.
 void flash_winner_led() {
   // Declare a variable "winner" of type uint32_t and initialize it to the value
   // of "EMPTY"
-  uint32_t winner = (uint32_t)EMPTY;
+
   // Declare a variable "led_pin" of type uint and initialize it to the value of
   // "ONBOARD_LED"
-  uint led_pin = ONBOARD_LED;
 
   // Start an infinite loop
   while (true) {
 
     // Check if the function "multicore_fifo_rvalid()" returns true
-    if (multicore_fifo_rvalid()) {
+
       // Pop a value from the "multicore_fifo" and store it in the variable
       // "winner"
-      winner = multicore_fifo_pop_blocking();
-    }
+
+
 
     // Check if the value stored in "winner" is equal to 'X'
-    if ((char)winner == X) {
+
       // If yes, set the value of "led_pin" to "LED1"
-      led_pin = LED1;
+
       // Check if the value stored in "winner" is equal to 'O'
-    } else if ((char)winner == O) {
+
       // If yes, set the value of "led_pin" to "LED2"
-      led_pin = LED2;
-    } else {
+
       // If the value of "winner" is neither 'X' nor 'O', set the value of
       // "led_pin" to "ONBOARD_LED"
-      led_pin = ONBOARD_LED;
-    }
+
     // Set the value of the "led_pin" to "HIGH"
-    gpio_put(led_pin, HIGH);
+
     // Sleep for "BLINK_LED_DELAY" milliseconds
-    sleep_ms(BLINK_LED_DELAY);
+
     // Set the value of the "led_pin" to "LOW"
-    gpio_put(led_pin, LOW);
+
     // Sleep for "BLINK_LED_DELAY" milliseconds
-    sleep_ms(BLINK_LED_DELAY);
+
   }
 }
 
@@ -484,14 +458,14 @@ passing moves as the argument.
 */
 void handle_btn1(uint *moves) {
   // Update the position of moves
-  update_position(moves);
+  
   // Call the function "get_curr_row" with the parameter "moves" and store the
   // result in a variable "curr_row"
   // Call the function "get_curr_col" with the parameter "moves" and store the
   // result in a variable "curr_col"
   // Call the function "print_curr_pos" with parameters "curr_row" and
   // "curr_col" to print the updated position
-  print_curr_pos(get_curr_row(*moves), get_curr_col(*moves));
+  
 }
 
 /*
@@ -517,66 +491,62 @@ void handle_btn2(char *current_player, uint *moves, char (*board)[COLS],
                  bool *is_game_over) {
   // Call the function "get_curr_row" with the parameter "moves" and store the
   // result in a variable "row"
-  uint row = get_curr_row(*moves);
+  
   // Call the function "get_curr_col" with the parameter "moves" and store the
   // result in a variable "col"
-  uint col = get_curr_col(*moves);
+  
 
   // Check if the position (row, col) is valid
-  if (!is_valid_pos(row, col)) {
+  
     // If the position is not valid, print a message "Invalid selection row %d
     // col %d" with row and col values
-    printf("Invalid selection row %d col %d", row, col);
+  
     // Return from the function
-    return;
-  }
+  
+  
 
   // Check if the position (row, col) is empty
-  if (!is_empty_pos(row, col, board)) {
+
     // If the position is not empty, print a message "row %d col %d is not
     // empty" with row and col values Print another message "Please select
     // another location."
-    printf("row %d col %d is not empty.\n", row, col);
-    printf("Please select another location.\n");
+
     // Return from the function
-    return;
-  }
+
+
 
   // Call the function "update_board" with parameters *current_player, *moves,
   // board to update the board
-  update_board(*current_player, *moves, board);
+
   // Call the function "print_board" with parameter board to print the board
-  print_board(board);
+
 
   // Check if there's a win
-  if (is_win(*current_player, board)) {
+
     // If there's a win, print a message "Player %c wins!" with *current_player
-    printf("Player %c wins!\n", *current_player);
+
     // Call the function "multicore_fifo_push_blocking" with parameter
     // *current_player to push the winner
-    multicore_fifo_push_blocking(*current_player);
+
     // Set *is_game_over to true
-    *is_game_over = true;
+
     // Print messages "Please press reset button to start the game." and
     // "Waiting for the reset ..."
-    printf("\nPlease press reset button to start the game.\n");
-    printf("\nWaiting for the reset ...\n");
-  } else if (is_tie(board)) {
+
     // If it's a tie game, print the message "Tie game!"
-    printf("Tie game!\n");
+
     // Call the function "reset_board" with parameters "current_player",
     // "moves", "board", and "is_game_over"
-    reset_board(current_player, moves, board, is_game_over);
-  } else {
+
+
     // If there's no win or tie, set *moves to 0
-    *moves = 0;
+
     // Call the function "get_new_player" with parameter *current_player and
     // store the result in *current_player
-    *current_player = get_new_player(*current_player);
+
 
     // Call the function `print_player_turn` to print which player's turn it is
-    print_player_turn(*current_player);
-  }
+
 }
 
 // ----------------------------------------
@@ -591,7 +561,7 @@ switch the player from one to the other.
 */
 char get_new_player(char current_player) {
   // Return the next player symbol
-  return (current_player == X) ? O : X;
+  
 }
 
 /*
@@ -607,36 +577,34 @@ game.
 // Check if the given player has won the game
 bool is_win(const char player, const char (*board)[COLS]) {
   // Check rows
-  for (int i = 0; i < ROWS; i++) {
+  
     // Check if all elements in the row are equal to the player
-    if (board[i][0] == player && board[i][1] == player &&
-        board[i][2] == player) {
+  
+  
       // Player wins
-      return true;
-    }
-  }
+  
+  
+  
   // Check columns
-  for (int j = 0; j < COLS; j++) {
+  
     // Check if all elements in the column are equal to the player
-    if (board[0][j] == player && board[1][j] == player &&
-        board[2][j] == player) {
-      // Player wins
-      return true;
-    }
-  }
+  
+  
+      // return to true to indicate player wins
+    
   // Check diagonals
   // Check if all elements in the first diagonal are equal to the player
-  if (board[0][0] == player && board[1][1] == player && board[2][2] == player) {
+  
     // Player wins
-    return true;
-  }
+  
+  
   // Check if all elements in the second diagonal are equal to the player
-  if (board[0][2] == player && board[1][1] == player && board[2][0] == player) {
+  
     // Player wins
-    return true;
-  }
+  
+  
   // Player has not won
-  return false;
+  
 }
 
 /*
@@ -648,16 +616,16 @@ filled and the function has not returned yet, it returns true.
 */
 bool is_tie(const char (*board)[COLS]) {
   // Iterate over each row of the board
-  for (int i = 0; i < ROWS; i++) {
+  
     // Iterate over each column of the board
-    for (int j = 0; j < COLS; j++) {
+  
       // Check if the current cell is empty
-      if (board[i][j] == EMPTY) {
+  
         // Return false if the cell is empty
-        return false;
-      }
-    }
-  }
+  
+  
+  
+  
   // Return true if all cells are filled
-  return true;
+  
 }
