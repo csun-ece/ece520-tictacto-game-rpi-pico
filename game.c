@@ -246,7 +246,7 @@ moves made.
 It calculates the current column number by dividing the number of moves made by
 3 and returning the remainder as an integer. For example, if moves is 5,
 get_curr_col returns 2. This calculation assumes that the game board has 3
- ROWS and COLS.
+ROWS and COLS.
 */
 // Define a function named "get_curr_col" that takes in the number of moves made
 // in the game

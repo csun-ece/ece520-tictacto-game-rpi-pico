@@ -1,18 +1,17 @@
 #include "game.h"
 
-#define NUMBER_OF_GPIOS 5
+#define NUMBER_OF_GPIOS 6 // Number of GPIOs used in this project
 // Main function
 int main() {
   //  initializes a 2D array board with dimensions ROWS x COLS with all elements
   //  set to the constant EMPTY.
   char board[ROWS][COLS] = {
-      {EMPTY, EMPTY, EMPTY}, {EMPTY, EMPTY, EMPTY}, {EMPTY, EMPTY, EMPTY}};
+      {EMPTY, EMPTY, EMPTY}, 
+      {EMPTY, EMPTY, EMPTY}, 
+      {EMPTY, EMPTY, EMPTY}};
 
   // Set current player to X
   char current_player = X;
-  // Set current row and column initialized to 0
-  uint row = 0;
-  uint col = 0;
   // Set current number of moves initialized to 0
   uint moves = 0;
 
@@ -22,7 +21,9 @@ int main() {
                                          {LED2, GPIO_OUT},
                                          {BTN1, GPIO_IN},
                                          {BTN2, GPIO_IN},
-                                         {BTN3, GPIO_IN}};
+                                         {BTN3, GPIO_IN},
+                                         {ONBOARD_LED, GPIO_OUT},
+                                         };
 
   // Struct for button 1 state
   volatile BtnState btn1 = {
