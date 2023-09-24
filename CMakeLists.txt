@@ -49,9 +49,9 @@ pico_sdk_init()
 # This line creates an executable target named `tictactoe` using the 
 # specified source files (`game.h`, `game.c`, `main.c`).
 add_executable(${PROJECT_NAME}
-    game.h    
-    game.c   
-    main.c  
+    game.h
+    game.c
+    main.c
 )
 
 # Create map, bin, extra, uf2 files

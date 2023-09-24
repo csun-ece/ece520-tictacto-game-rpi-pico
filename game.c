@@ -367,7 +367,7 @@ of the board is displayed inside each cell.
 void print_board(const char (*board)[COLS]) {
   // Print the first row of the board
   printf("\e[1;1H\e[2J"); // ANSI escape codes to clear console and move cursor to top
-  printf("%c | %c | %c\n", board[0][0], board[0][1], board[0][2]);
+  printf(" %c | %c | %c\n", board[0][0], board[0][1], board[0][2]);
   // Print the separator line
   printf("---+---+---\n");
   // Print the second row of the board
